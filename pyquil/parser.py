@@ -183,7 +183,6 @@ class QuilTransformer(Transformer):
 
     def def_gate(self, name, *args):
         *variables, matrix = args
-        print(matrix)
         return DefGate(name, matrix=np.array(matrix), parameters=variables)
 
     def matrix(self, *rows):
@@ -278,7 +277,7 @@ class QuilTransformer(Transformer):
     string = str
 
 
-quil_parser = Lark(quil_grammar, start='quil', parser='lalr')
+quil_parser = Lark(quil_grammar, start='quil', parser='lalr', transformer=QuilTransformer())
 
 
 def parse_program(quil) -> Program:
@@ -299,7 +298,6 @@ def parse(quil):
     :return: list of instructions
     """
     try:
-        tree = quil_parser.parse(quil)
-        return QuilTransformer().transform(tree)
+        return quil_parser.parse(quil)
     except LarkError as e:
         raise RuntimeError(e)
