@@ -23,6 +23,7 @@ from rpcq.messages import QPURequest, ParameterAref
 
 from pyquil import Program
 from pyquil.parser import parse
+from pyquil.api._config import PyquilConfig
 from pyquil.api._qam import QAM
 from pyquil.api._error_reporting import _record_call
 from pyquil.quilatom import MemoryReference, BinaryExp, Function, Parameter, Expression
@@ -96,6 +97,7 @@ support at support@rigetti.com.""")
         self.user = user
         self._last_results: Dict[str, np.ndarray] = {}
         self.priority = priority
+        self.config = PyquilConfig()
 
     def get_version_info(self) -> dict:
         """
@@ -151,7 +153,9 @@ support at support@rigetti.com.""")
 
         request = QPURequest(program=self._executable.program,
                              patch_values=self._build_patch_values(),
-                             id=str(uuid.uuid4()))
+                             id=str(uuid.uuid4()),
+                             user_id=self.config["user_id"],
+                             user_token=self.config["key"])
         job_priority = run_priority if run_priority is not None else self.priority
         job_id = self.client.call('execute_qpu_request', request=request, user=self.user,
                                   priority=job_priority)
