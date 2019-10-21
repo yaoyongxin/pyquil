@@ -272,6 +272,7 @@ class QuantumComputer:
             protoquil_positional: Optional[bool] = None,
             *,
             protoquil: Optional[bool] = None,
+            symmetrization: Union[bool, List[int]] = False,
             measurement: Union[bool, List[int]] = False,
     ) -> Union[BinaryExecutableResponse, PyQuilExecutableResponse]:
         """
@@ -313,7 +314,23 @@ class QuantumComputer:
         assert all(flags) or all(not f for f in flags), "Must turn quilc all on or all off"
         quilc = all(flags)
 
-        program = program.copy()
+        modify_program = any([symmetrization, measurement])
+        if modify_program:
+            program = program.copy()
+
+        if symmetrization:
+            if 'DECLARE flip' in program.out():
+                raise ValueError('Symmetrization memory "flip" has been declared for this program.')
+            if symmetrization is True:
+                qubits = program.get_qubits()
+            elif isinstance(symmetrization, list):
+                qubits = symmetrization
+            else:
+                raise ValueError('The "symmetrization" argument must be a bool or list of ints.')
+            flip = program.declare('flip', 'REAL', len(qubits))
+            for idx, q in enumerate(qubits):
+                program += RX(flip[idx], q)
+
         if measurement:
             if 'DECLARE ro' in program.out():
                 raise ValueError('Readout memory "ro" has already been declared for this program.')
