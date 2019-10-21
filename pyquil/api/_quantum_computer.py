@@ -269,9 +269,10 @@ class QuantumComputer:
             program: Program,
             to_native_gates: bool = True,
             optimize: bool = True,
-            protoquil_positional: bool = None,
+            protoquil_positional: Optional[bool] = None,
             *,
-            protoquil: bool = None,
+            protoquil: Optional[bool] = None,
+            measurement: Union[bool, List[int]] = False,
     ) -> Union[BinaryExecutableResponse, PyQuilExecutableResponse]:
         """
         A high-level interface to program compilation.
@@ -311,6 +312,20 @@ class QuantumComputer:
         flags = [to_native_gates, optimize]
         assert all(flags) or all(not f for f in flags), "Must turn quilc all on or all off"
         quilc = all(flags)
+
+        program = program.copy()
+        if measurement:
+            if 'DECLARE ro' in program.out():
+                raise ValueError('Readout memory "ro" has already been declared for this program.')
+            if measurement is True:
+                qubits = program.get_qubits()
+            elif isinstance(measurement, list):
+                qubits = measurement
+            else:
+                raise ValueError('The "measurement" argument must be a bool or list of ints.')
+            ro = program.declare('ro', 'BIT', len(qubits))
+            for idx, q in enumerate(qubits):
+                program += MEASURE(q, ro[idx])
 
         if quilc:
             nq_program = self.compiler.quil_to_native_quil(program, protoquil=protoquil)
