@@ -36,7 +36,7 @@ from pyquil.api._qam import QAM
 from pyquil.api._qpu import QPU
 from pyquil.api._qvm import ForestConnection, QVM
 from pyquil.device import AbstractDevice, NxDevice, gates_in_isa, ISA, Device
-from pyquil.gates import RX, MEASURE
+from pyquil.gates import RX, RZ, MEASURE
 from pyquil.noise import decoherence_noise_with_asymmetric_ro, NoiseModel
 from pyquil.pyqvm import PyQVM
 from pyquil.quil import Program, validate_supported_quil
@@ -272,6 +272,7 @@ class QuantumComputer:
             protoquil_positional: Optional[bool] = None,
             *,
             protoquil: Optional[bool] = None,
+            expectation: Union[bool, List[int]] = False,
             symmetrization: Union[bool, List[int]] = False,
             measurement: Union[bool, List[int]] = False,
     ) -> Union[BinaryExecutableResponse, PyQuilExecutableResponse]:
@@ -314,9 +315,28 @@ class QuantumComputer:
         assert all(flags) or all(not f for f in flags), "Must turn quilc all on or all off"
         quilc = all(flags)
 
-        modify_program = any([symmetrization, measurement])
+        modify_program = any([expectation, symmetrization, measurement])
         if modify_program:
             program = program.copy()
+
+        if expectation:
+            if 'DECLARE post_rz' in program.out():
+                raise ValueError('Memory "post_rz_*" has been declared for this program.')
+            if expectation is True:
+                qubits = program.get_qubits()
+            elif isinstance(expectation, list):
+                qubits = expectation
+            else:
+                raise ValueError('The "expectation" argument must be a bool or list of ints.')
+            post_rz_a = program.declare('post_rz_a', 'REAL', len(qubits))
+            post_rz_b = program.declare('post_rz_b', 'REAL', len(qubits))
+            post_rz_c = program.declare('post_rz_c', 'REAL', len(qubits))
+            for idx, q in enumerate(qubits):
+                program += RZ(post_rz_a[idx], q)
+                program += RX(np.pi/2, q)
+                program += RZ(post_rz_b[idx], q)
+                program += RX(-np.pi/2, q)
+                program += RZ(post_rz_c[idx], q)
 
         if symmetrization:
             if 'DECLARE flip' in program.out():
