@@ -275,6 +275,7 @@ class QuantumComputer:
             expectation: Union[bool, List[int]] = False,
             symmetrization: Union[bool, List[int]] = False,
             measurement: Union[bool, List[int]] = False,
+            shots: Optional[int] = None,
     ) -> Union[BinaryExecutableResponse, PyQuilExecutableResponse]:
         """
         A high-level interface to program compilation.
@@ -363,6 +364,8 @@ class QuantumComputer:
             ro = program.declare('ro', 'BIT', len(qubits))
             for idx, q in enumerate(qubits):
                 program += MEASURE(q, ro[idx])
+
+        program.wrap_in_numshots_loop(shots)
 
         if quilc:
             nq_program = self.compiler.quil_to_native_quil(program, protoquil=protoquil)
