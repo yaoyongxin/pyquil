@@ -365,7 +365,8 @@ class QuantumComputer:
             for idx, q in enumerate(qubits):
                 program += MEASURE(q, ro[idx])
 
-        program.wrap_in_numshots_loop(shots)
+        if shots:
+            program.wrap_in_numshots_loop(shots)
 
         if quilc:
             nq_program = self.compiler.quil_to_native_quil(program, protoquil=protoquil)
