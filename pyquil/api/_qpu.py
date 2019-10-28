@@ -177,6 +177,81 @@ support at support@rigetti.com.""")
 
         return self
 
+    @_record_call
+    def batch(self,
+              *,
+              memory_maps: List[Dict[str, List[Union[int, float]]]],
+              bitmasks: Optional[List[List[int]]] = None,
+              run_priority: Optional[int] = None):
+        """
+        Run a pyquil program on the QPU.
+
+        This formats the classified data from the QPU server by stacking measured bits into
+        an array of shape (trials, classical_addresses). The mapping of qubit to
+        classical address is backed out from MEASURE instructions in the program, so
+        only do measurements where there is a 1-to-1 mapping between qubits and classical
+        addresses.
+
+        :param run_priority: The priority with which to insert jobs into the QPU queue. Lower
+                             integers correspond to higher priority. If not specified, the QPU
+                             object's default priority is used.
+        :return: The QPU object itself.
+        """
+        # This prevents a common error where users expect QVM.run()
+        # and QPU.run() to be interchangeable. QPU.run() needs the
+        # supplied executable to have been compiled, QVM.run() does not.
+        if isinstance(self._executable, Program):
+            raise TypeError("It looks like you have provided a Program where an Executable"
+                            " is expected. Please use QuantumComputer.compile() to compile"
+                            " your program.")
+        super().batch()
+
+        assert len(memory_maps) == len(bitmasks)
+
+        requests = []
+        for memory_map in memory_maps:
+            for region_name, values_list in memory_map.items():
+                for offset, value in enumerate(values_list):
+                    self.write_memory(region_name=region_name,
+                                      offset=offset,
+                                      value=value)
+
+            requests.append(QPURequest(program=self._executable.program,
+                                       patch_values=self._build_patch_values(),
+                                       id=str(uuid.uuid4())))
+
+        job_priority = run_priority if run_priority is not None else self.priority
+        job_ids = self.client.call('batch_execute_qpu_requests',
+                                   requests=requests,
+                                   user=self.user,
+                                   priority=job_priority)
+
+        results = None
+        ro_sources = self._executable.ro_sources
+        self._memory_results = defaultdict(lambda: None)
+
+        all_bitstrings = []
+        for job_id, bitmask in zip(job_ids, bitmasks):
+            results = self._get_buffers(job_id)
+
+            if results:
+                bitstrings = _extract_bitstrings(ro_sources, results)
+            elif not ro_sources:
+                warnings.warn("You are running a QPU program with no MEASURE instructions. "
+                              "The result of this program will always be an empty array. Are "
+                              "you sure you didn't mean to measure some of your qubits?")
+                bitstrings = np.zeros((0, 0), dtype=np.int64)
+            else:
+                bitstrings = None
+
+            flipped_bitstrings = np.bitwise_xor(bitstrings, bitmask)
+            all_bitstrings.append(flipped_bitstrings)
+
+        self._memory_results["ro"] = np.concatenate(all_bitstrings)
+        self._last_results = results
+
+        return self
+
     def _get_buffers(self, job_id: str) -> Dict[str, np.ndarray]:
         """
         Return the decoded result buffers for particular job_id.

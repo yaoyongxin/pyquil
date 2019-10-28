@@ -17,7 +17,7 @@ import re
 import socket
 import warnings
 from math import pi, log
-from typing import List, Dict, Tuple, Iterator, Union
+from typing import List, Dict, Tuple, Iterator, Union, Optional
 import itertools
 
 import subprocess
@@ -127,6 +127,29 @@ class QuantumComputer:
         return self.qam.run() \
             .wait() \
             .read_memory(region_name='ro')
+
+    @_record_call
+    def batch(
+            self,
+            executable: Executable,
+            *,
+            memory_maps: Optional[List[Dict[str, List[Union[int, float]]]]] = None,
+            bitmasks: Optional[List[List[int]]] = None) -> np.ndarray:
+        """
+        Run a quil executable. If the executable contains declared parameters, then a memory
+        map must be provided, which defines the runtime values of these parameters.
+
+        :param executable: The program to run. You are responsible for compiling this first.
+        :param memory_map: The mapping of declared parameters to their values. The values
+            are a list of floats or integers.
+        :return: A numpy array of shape (trials, len(ro-register)) that contains 0s and 1s.
+        """
+        if memory_maps is None:
+            return self.run(executable)
+
+        self.qam.load(executable)
+        return self.qam.batch(memory_maps=memory_maps,
+                              bitmasks=bitmasks)
 
     @_record_call
     def run_symmetrized_readout(self, program: Program, trials: int, symm_type: int = 3,

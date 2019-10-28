@@ -17,6 +17,7 @@ import warnings
 
 from abc import ABC, abstractmethod
 from collections import defaultdict
+from typing import Dict, List, Optional, Union
 
 from rpcq.messages import ParameterAref
 
@@ -77,6 +78,18 @@ class QAM(ABC):
 
     @abstractmethod
     def run(self):
+        """
+        Reset the program counter on a QAM and run its loaded Quil program.
+        """
+        self.status = 'running'
+
+        return self
+
+    @abstractmethod
+    def batch(self,
+              *,
+              memory_maps: List[Dict[str, List[Union[int, float]]]],
+              bitmasks: Optional[List[List[int]]] = None):
         """
         Reset the program counter on a QAM and run its loaded Quil program.
         """
