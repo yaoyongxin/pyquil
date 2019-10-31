@@ -1,16 +1,20 @@
 PyQuil: Quantum programming in Python
 =====================================
 
+[![license](https://img.shields.io/github/license/rigetti/pyquil)](https://opensource.org/licenses/Apache-2.0)
 [![pipeline status](https://gitlab.com/rigetti/forest/pyquil/badges/master/pipeline.svg)](https://gitlab.com/rigetti/forest/pyquil/commits/master)
 [![build status](https://semaphoreci.com/api/v1/rigetti/pyquil/branches/master/shields_badge.svg)](https://semaphoreci.com/rigetti/pyquil)
 [![docs status](https://readthedocs.org/projects/pyquil/badge/?version=latest)](http://pyquil.readthedocs.io/en/latest/?badge=latest)
 [![pypi downloads](https://img.shields.io/pypi/dm/pyquil.svg)](https://pypi.org/project/pyquil/)
 [![pypi version](https://img.shields.io/pypi/v/pyquil.svg)](https://pypi.org/project/pyquil/)
+[![docker pulls](https://img.shields.io/docker/pulls/rigetti/forest)](https://hub.docker.com/r/rigetti/forest)
 [![slack workspace](https://img.shields.io/badge/slack-rigetti--forest-812f82.svg?)][slack_invite]
 [![code-style][black-badge]][black-repo]
 
-[black-repo]: https://github.com/psf/black
 [black-badge]: https://img.shields.io/badge/code%20style-black-000000.svg
+[black-repo]: https://github.com/psf/black
+[conda-forge-badge]: https://img.shields.io/conda/vn/conda-forge/pyquil.svg
+[conda-forge-repo]: https://anaconda.org/conda-forge/pyquil
 
 PyQuil is a Python library for quantum programming using [Quil](https://arxiv.org/abs/1608.03355),
 the quantum instruction language developed at [Rigetti Computing](https://www.rigetti.com/).
@@ -28,6 +32,10 @@ below to get started with running your first quantum program!
 
 Installation
 ------------
+
+[![conda-forge-version][conda-forge-badge]][conda-forge-repo]
+[![conda-rigetti-version](https://img.shields.io/conda/vn/rigetti/pyquil?label=conda-rigetti)](https://anaconda.org/rigetti/pyquil)
+
 
 **Please Note: PyQuil, along with quilc, the QVM, and other libraries, make up what
 is called the Forest SDK. To make full use of pyQuil's functionality, you will need
