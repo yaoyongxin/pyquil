@@ -109,7 +109,18 @@ class QuantumComputer:
         return self.device.get_isa(oneq_type=oneq_type, twoq_type=twoq_type)
 
     @_record_call
-    def run(self, executable: ExecutableDesignator,
+    def calibrate(self, experiment: TomographyExperiment) -> List[ExperimentResult]:
+        """
+
+        :param experiment:
+        :return:
+        """
+        calibration_experiment = experiment.generate_calibration_experiment()
+        return self.experiment(calibration_experiment)
+
+    @_record_call
+    def run(self,
+            executable: ExecutableDesignator,
             memory_map: Dict[str, List[Union[int, float]]] = None) -> np.ndarray:
         """
         Run a quil executable. If the executable contains declared parameters, then a memory
