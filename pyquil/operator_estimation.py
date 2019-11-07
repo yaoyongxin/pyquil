@@ -16,8 +16,8 @@ from pyquil.api import QuantumComputer
 from pyquil.experiment import (_OneQState, _pauli_to_product_state, ExperimentResult,
                                ExperimentSetting, OperatorEncoder, SIC0, SIC1, SIC2, SIC3,
                                SymmetrizationLevel, TomographyExperiment, TensorProductState,
-                               minusX, minusY, minusZ, plusX, plusY, plusZ, read_json, to_json,
-                               zeros_state)
+                               minusX, minusY, minusZ, plusX, plusY, plusZ, ratio_variance,
+                               read_json, to_json, zeros_state)
 from pyquil.gates import RESET, RX, RY, RZ, X
 from pyquil.paulis import PauliTerm, sI, is_identity
 
@@ -595,41 +595,6 @@ def _stats_from_measurements(bs_results: np.ndarray, qubit_index_map: Dict,
     obs_var = np.var(obs_vals) / n_shots
 
     return obs_mean, obs_var
-
-
-def ratio_variance(a: Union[float, np.ndarray],
-                   var_a: Union[float, np.ndarray],
-                   b: Union[float, np.ndarray],
-                   var_b: Union[float, np.ndarray]) -> Union[float, np.ndarray]:
-    r"""
-    Given random variables 'A' and 'B', compute the variance on the ratio Y = A/B. Denote the
-    mean of the random variables as a = E[A] and b = E[B] while the variances are var_a = Var[A]
-    and var_b = Var[B] and the covariance as Cov[A,B]. The following expression approximates the
-    variance of Y
-
-    Var[Y] \approx (a/b) ^2 * ( var_a /a^2 + var_b / b^2 - 2 * Cov[A,B]/(a*b) )
-
-    We assume the covariance of A and B is negligible, resting on the assumption that A and B
-    are independently measured. The expression above rests on the assumption that B is non-zero,
-    an assumption which we expect to hold true in most cases, but makes no such assumptions
-    about A. If we allow E[A] = 0, then calculating the expression above via numpy would complain
-    about dividing by zero. Instead, we can re-write the above expression as
-
-    Var[Y] \approx var_a /b^2 + (a^2 * var_b) / b^4
-
-    where we have dropped the covariance term as noted above.
-
-    See the following for more details:
-      - https://doi.org/10.1002/(SICI)1097-0320(20000401)39:4<300::AID-CYTO8>3.0.CO;2-O
-      - http://www.stat.cmu.edu/~hseltman/files/ratio.pdf
-      - https://en.wikipedia.org/wiki/Taylor_expansions_for_the_moments_of_functions_of_random_variables
-
-    :param a: Mean of 'A', to be used as the numerator in a ratio.
-    :param var_a: Variance in 'A'
-    :param b: Mean of 'B', to be used as the numerator in a ratio.
-    :param var_b: Variance in 'B'
-    """
-    return var_a / b**2 + (a**2 * var_b) / b**4
 
 
 def _calibration_program(qc: QuantumComputer, tomo_experiment: TomographyExperiment,
