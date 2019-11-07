@@ -47,6 +47,12 @@ class SymmetrizationLevel(IntEnum):
     OA_STRENGTH_3 = 3
 
 
+class CalibrationMethod(IntEnum):
+    PLUS_EIGENSTATE = 1
+    NONE = 0
+    MINUS_EIGENSTATE = -1
+
+
 def _abbrev_program(program: Program, max_len=10):
     """Create an abbreviated string representation of a Program.
 
@@ -138,7 +144,8 @@ class TomographyExperiment:
                  program: Program,
                  qubits: Optional[List[int]] = None,
                  *,
-                 symmetrization: int = SymmetrizationLevel.EXHAUSTIVE):
+                 symmetrization: int = SymmetrizationLevel.EXHAUSTIVE,
+                 calibration: int = CalibrationMethod.PLUS_EIGENSTATE):
         if len(settings) == 0:
             settings = []
         else:
@@ -153,6 +160,13 @@ class TomographyExperiment:
                           "in a future release of pyquil")
         self.qubits = qubits
         self.symmetrization = SymmetrizationLevel(symmetrization)
+        if self.symmetrization != SymmetrizationLevel.EXHAUSTIVE:
+            if type(calibration) == int and calibration != 0:
+                warnings.warn('Calibration is only supported for exhaustive symmetrization, '
+                              'thus setting self.calibration = 0 (CalibrationMethod.NONE).')
+            self.calibration = CalibrationMethod.NONE
+        else:
+            self.calibration = CalibrationMethod(calibration)
         self.shots = self.program.num_shots
 
         if 'RESET' in self.program.out():
@@ -233,9 +247,36 @@ class TomographyExperiment:
         else:
             string += f'active reset: disabled\n'
         string += f'symmetrization: {self.symmetrization} ({self.symmetrization.name.lower()})\n'
+        string += f'calibration: {self.calibration} ({self.calibration.name.lower()})\n'
         string += f'program:\n{_abbrev_program(self.program)}\n'
         string += f'settings:\n{self.settings_string(abbrev_after=20)}'
         return string
+
+    def generate_calibration_experiment(self):
+        """
+        Plus eig.
+
+        :return:
+        """
+        if self.calibration != CalibrationMethod.PLUS_EIGENSTATE:
+            raise ValueError('We currently only support the "plus eigenstate" calibration method.')
+
+        calibration_settings = []
+        for settings in self:
+            calibration_settings.append(ExperimentSetting(in_state=settings[0].out_operator,
+                                                          out_operator=settings[0].out_operator))
+        calibration_program = Program()
+        if self.reset:
+            calibration_program += RESET()
+        calibration_program.wrap_in_numshots_loop(self.shots)
+
+        if self.symmetrization != SymmetrizationLevel.EXHAUSTIVE:
+            raise ValueError('We currently only support calibration for exhaustive symmetrization')
+
+        return TomographyExperiment(settings=calibration_settings,
+                                    program=calibration_program,
+                                    symmetrization=SymmetrizationLevel.EXHAUSTIVE,
+                                    calibration=CalibrationMethod.NONE)
 
     def serializable(self):
         return {
