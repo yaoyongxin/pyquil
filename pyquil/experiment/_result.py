@@ -228,6 +228,23 @@ def correct_raw_results(
                                             rawr.std_err ** 2,
                                             calr.expectation,
                                             calr.std_err ** 2)
+        rs = []
+        for r, c in zip(rawr.correlations, calr.correlations):
+            e = r.expectation / c.expectation
+            v = ratio_variance(r.expectation,
+                               r.std_err ** 2,
+                               c.expectation,
+                               c.std_err ** 2)
+            rs.append(ExperimentResult(setting=r.setting,
+                                       expectation=e,
+                                       std_err=np.sqrt(v).item(),
+                                       total_counts=r.total_counts,
+                                       raw_expectation=r.expectation,
+                                       raw_std_err=r.std_err,
+                                       calibration_expectation=c.expectation,
+                                       calibration_std_err=c.std_err,
+                                       calibration_counts=c.total_counts))
+
         corrected_results.append(ExperimentResult(setting=rawr.setting,
                                                   expectation=corrected_expectation,
                                                   std_err=np.sqrt(corrected_variance).item(),
@@ -236,5 +253,6 @@ def correct_raw_results(
                                                   raw_std_err=rawr.std_err,
                                                   calibration_expectation=calr.expectation,
                                                   calibration_std_err=calr.std_err,
-                                                  calibration_counts=calr.total_counts))
+                                                  calibration_counts=calr.total_counts,
+                                                  correlations=rs))
     return corrected_results
