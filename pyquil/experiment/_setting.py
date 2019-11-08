@@ -21,7 +21,7 @@ import logging
 import re
 import sys
 import warnings
-from typing import Iterable, Tuple
+from typing import Iterable, List, Optional, Tuple
 
 from pyquil.paulis import PauliTerm, sI, is_identity
 from pyquil.experiment._memory import (pauli_term_to_measurement_memory_map,
@@ -194,8 +194,12 @@ class ExperimentSetting:
     """
     in_state: TensorProductState
     out_operator: PauliTerm
+    correlations: Optional[List[List[int]]] = None
 
-    def __init__(self, in_state: TensorProductState, out_operator: PauliTerm):
+    def __init__(self,
+                 in_state: TensorProductState,
+                 out_operator: PauliTerm,
+                 correlations: Optional[List[List[int]]] = None):
         # For backwards compatibility, handle in_state specified by PauliTerm.
         if isinstance(in_state, PauliTerm):
             warnings.warn("Please specify in_state as a TensorProductState",
@@ -203,6 +207,7 @@ class ExperimentSetting:
             in_state = _pauli_to_product_state(in_state)
         object.__setattr__(self, 'in_state', in_state)
         object.__setattr__(self, 'out_operator', out_operator)
+        object.__setattr__(self, 'correlations', correlations)
 
     @property
     def in_operator(self):

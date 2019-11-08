@@ -264,7 +264,9 @@ class TomographyExperiment:
         calibration_settings = []
         for settings in self:
             calibration_settings.append(ExperimentSetting(in_state=settings[0].out_operator,
-                                                          out_operator=settings[0].out_operator))
+                                                          out_operator=settings[0].out_operator,
+                                                          correlations=settings[0].correlations))
+
         calibration_program = Program()
         if self.reset:
             calibration_program += RESET()

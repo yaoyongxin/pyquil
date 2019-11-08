@@ -36,10 +36,12 @@ from pyquil.api._qam import QAM
 from pyquil.api._qpu import QPU
 from pyquil.api._qvm import ForestConnection, QVM
 from pyquil.device import AbstractDevice, NxDevice, gates_in_isa, ISA, Device
-from pyquil.experiment import (ExperimentResult, TomographyExperiment, bitstrings_to_expectations,
-                               merge_memory_map_lists, build_symmetrization_memory_maps)
+from pyquil.experiment import (ExperimentResult, ExperimentSetting, TomographyExperiment,
+                               bitstrings_to_expectations, build_symmetrization_memory_maps,
+                               merge_memory_map_lists)
 from pyquil.gates import RX, MEASURE
 from pyquil.noise import decoherence_noise_with_asymmetric_ro, NoiseModel
+from pyquil.paulis import PauliTerm
 from pyquil.pyqvm import PyQVM
 from pyquil.quil import Program, validate_supported_quil
 
@@ -237,16 +239,46 @@ class QuantumComputer:
 
             # TODO: support simultaneous observables via multiple correlations
             correlations = [setting.out_operator.get_qubits()]
+            # TODO: maybe this should just be set to get_qubits upon construction
+            if setting.correlations:
+                correlations += setting.correlations
             expectations = bitstrings_to_expectations(symmetrized_bitstrings,
                                                       correlations=correlations)
+            print(expectations)
+
+
+            means = np.mean(expectations, axis=0)
+            print(means)
+            std_errs = np.std(expectations, axis=0, ddof=1) / np.sqrt(len(expectations))
+
+            # TODO: make this into a function
+            sim_rs = []
+            for corr, mean, std_err in zip(correlations, means, std_errs):
+                print(corr, mean, std_err)
+                out_operator = PauliTerm.from_list([(setting.out_operator[i], i) for i in corr])
+                print(out_operator)
+                s = ExperimentSetting(in_state=setting.in_state,
+                                      out_operator=out_operator,
+                                      correlations=corr)
+                r = ExperimentResult(setting=s,
+                                     expectation=mean,
+                                     std_err=std_err,
+                                     total_counts=len(expectations))
+                sim_rs.append(r)
+
+            result = ExperimentResult(setting=sim_rs[0].setting,
+                                      expectation=sim_rs[0].expectation,
+                                      std_err=sim_rs[0].std_err,
+                                      total_counts=sim_rs[0].total_counts,
+                                      correlations=sim_rs[1:])
 
             # TODO: add calibration and correction
-            mean = np.mean(expectations).item()
-            std_err = np.std(expectations, axis=0, ddof=1) / np.sqrt(len(expectations)).item()
-            result = ExperimentResult(setting=setting,
-                                      expectation=mean,
-                                      std_err=std_err,
-                                      total_counts=len(expectations))
+            # mean = np.mean(expectations).item()
+            # std_err = np.std(expectations, axis=0, ddof=1) / np.sqrt(len(expectations))
+            # result = ExperimentResult(setting=setting,
+            #                           expectation=mean,
+            #                           std_err=std_err,
+            #                           total_counts=len(expectations))
             results.append(result)
         return results
 

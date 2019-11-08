@@ -85,6 +85,7 @@ class ExperimentResult:
     calibration_expectation: Union[float, complex] = None
     calibration_std_err: Union[float, complex] = None
     calibration_counts: int = None
+    correlations: Optional[List['ExperimentResult']] = None
 
     def __init__(self, setting: ExperimentSetting,
                  expectation: Union[float, complex],
@@ -97,7 +98,8 @@ class ExperimentResult:
                  calibration_expectation: Union[float, complex] = None,
                  calibration_stddev: Union[float, complex] = None,
                  calibration_std_err: Union[float, complex] = None,
-                 calibration_counts: int = None):
+                 calibration_counts: int = None,
+                 correlations: Optional[List['ExperimentResult']] = None):
 
         object.__setattr__(self, 'setting', setting)
         object.__setattr__(self, 'expectation', expectation)
@@ -105,6 +107,7 @@ class ExperimentResult:
         object.__setattr__(self, 'raw_expectation', raw_expectation)
         object.__setattr__(self, 'calibration_expectation', calibration_expectation)
         object.__setattr__(self, 'calibration_counts', calibration_counts)
+        object.__setattr__(self, 'correlations', correlations)
 
         if stddev is not None:
             warnings.warn("'stddev' has been renamed to 'std_err'")
@@ -217,6 +220,7 @@ def correct_raw_results(
     :param calibration_results:
     :return:
     """
+    # TODO: make this work with correlations
     corrected_results = []
     for rawr, calr in zip(raw_results, calibration_results):
         corrected_expectation = rawr.expectation / calr.expectation
