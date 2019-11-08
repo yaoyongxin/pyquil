@@ -8,6 +8,17 @@ Changelog
 
 ### Improvements and Changes
 
+-   There is a new `QuantumComputer.experiment` method for running a collection of
+    quantum programs as defined by a `TomographyExperiment`. These objects have a
+    main program body and a collection of state preparation and measurement
+    specifications, which capture the structure of many near-term applications
+    and algorithms like the variational quantum eigensolver (VQE). In addition,
+    the `TomographyExperiment` encodes information about symmetrization, active
+    qubit reset, and the number of shots to perform on the quantum backend (e.g.
+    the QVM or QPU). For more information check out the API documentation sections
+    on the [Quantum Computer](docs/source/apidocs/quantum_computer.rst) and on the
+    [Experiment Module](docs/source/apidocs/experiment.rst) (@karalekas, gh-1100).
+
 ### Bugfixes
 
 [v2.13](https://github.com/rigetti/pyquil/compare/v2.12.0...v2.13.0) (November 7, 2019)
