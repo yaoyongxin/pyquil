@@ -210,49 +210,51 @@ def ratio_variance(a: Union[float, np.ndarray],
     return var_a / b**2 + (a**2 * var_b) / b**4
 
 
-def correct_raw_results(
-        raw_results: List[ExperimentResult],
-        calibration_results: List[ExperimentResult]
+def corrected_experiment_result(
+        result: ExperimentResult,
+        calibration: ExperimentResult,
+        correlations: Optional[List[ExperimentResult]] = None,
+) -> ExperimentResult:
+    """
+
+    :param raw:
+    :param calibration:
+    :return:
+    """
+    corrected_expectation = result.expectation / calibration.expectation
+    corrected_variance = ratio_variance(result.expectation,
+                                        result.std_err ** 2,
+                                        calibration.expectation,
+                                        calibration.std_err ** 2)
+    return ExperimentResult(setting=result.setting,
+                            expectation=corrected_expectation,
+                            std_err=np.sqrt(corrected_variance).item(),
+                            total_counts=result.total_counts,
+                            raw_expectation=result.expectation,
+                            raw_std_err=result.std_err,
+                            calibration_expectation=calibration.expectation,
+                            calibration_std_err=calibration.std_err,
+                            calibration_counts=calibration.total_counts,
+                            correlations=correlations)
+
+
+def apply_readout_correction(
+        results: List[ExperimentResult],
+        calibrations: List[ExperimentResult]
 ) -> List[ExperimentResult]:
     """
 
-    :param raw_results:
-    :param calibration_results:
+    :param results:
+    :param calibrations:
     :return:
     """
-    # TODO: make this work with correlations
     corrected_results = []
-    for rawr, calr in zip(raw_results, calibration_results):
-        corrected_expectation = rawr.expectation / calr.expectation
-        corrected_variance = ratio_variance(rawr.expectation,
-                                            rawr.std_err ** 2,
-                                            calr.expectation,
-                                            calr.std_err ** 2)
-        rs = []
-        for r, c in zip(rawr.correlations, calr.correlations):
-            e = r.expectation / c.expectation
-            v = ratio_variance(r.expectation,
-                               r.std_err ** 2,
-                               c.expectation,
-                               c.std_err ** 2)
-            rs.append(ExperimentResult(setting=r.setting,
-                                       expectation=e,
-                                       std_err=np.sqrt(v).item(),
-                                       total_counts=r.total_counts,
-                                       raw_expectation=r.expectation,
-                                       raw_std_err=r.std_err,
-                                       calibration_expectation=c.expectation,
-                                       calibration_std_err=c.std_err,
-                                       calibration_counts=c.total_counts))
+    for result, cal in zip(results, calibrations):
 
-        corrected_results.append(ExperimentResult(setting=rawr.setting,
-                                                  expectation=corrected_expectation,
-                                                  std_err=np.sqrt(corrected_variance).item(),
-                                                  total_counts=rawr.total_counts,
-                                                  raw_expectation=rawr.expectation,
-                                                  raw_std_err=rawr.std_err,
-                                                  calibration_expectation=calr.expectation,
-                                                  calibration_std_err=calr.std_err,
-                                                  calibration_counts=calr.total_counts,
-                                                  correlations=rs))
+        corrs = []
+        for r, c in zip(result.correlations, cal.correlations):
+            corrs.append(corrected_experiment_result(r, c))
+
+        corrected_results.append(corrected_experiment_result(result, cal, corrs))
+
     return corrected_results
