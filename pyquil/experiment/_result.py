@@ -258,3 +258,20 @@ def apply_readout_correction(
         corrected_results.append(corrected_experiment_result(result, cal, corrs))
 
     return corrected_results
+
+
+def results_to_dict(results: List[ExperimentResult]) -> dict:
+    """
+
+    :param results:
+    :return:
+    """
+    results_dict = {}
+    for result in results:
+        results_dict[f'{result.setting.out_operator.id(sort_ops=False)}'] = result.expectation
+        results_dict[f'{result.setting.out_operator.id(sort_ops=False)}_err'] = result.std_err
+        if result.correlations:
+            for c in result.correlations:
+                results_dict[f'{c.setting.out_operator.id(sort_ops=False)}'] = c.expectation
+                results_dict[f'{c.setting.out_operator.id(sort_ops=False)}_err'] = c.std_err
+    return results_dict
