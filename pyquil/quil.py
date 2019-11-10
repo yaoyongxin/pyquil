@@ -658,7 +658,7 @@ class Program(object):
 
     def __repr__(self):
         string = f'shots: {self.num_shots}\n'
-        string += 'program: \n'
+        string += 'program: \n   '
         string += '\n   '.join(itertools.chain(
             (str(dg) for dg in self._defined_gates),
             (str(instr) for instr in self.instructions),
