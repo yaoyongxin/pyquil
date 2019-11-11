@@ -290,9 +290,17 @@ class QPUCompiler(AbstractCompiler):
         Reset the state of the QPUCompiler Client connections.
         """
         pyquil_config = PyquilConfig()
-        self.quilc_client = refresh_client(self.quilc_client, pyquil_config.quilc_url)
-        self.qpu_compiler_client = refresh_client(self.qpu_compiler_client,
-                                                  pyquil_config.qpu_compiler_url)
+        if pyquil_config.quilc_url is not None:
+            quilc_endpoint = pyquil_config.quilc_url
+        else:
+            quilc_endpoint = self.quilc_client.endpoint
+        self.quilc_client = refresh_client(self.quilc_client, quilc_endpoint)
+
+        if pyquil_config.qpu_compiler_url is not None:
+            qpu_compiler_endpoint = pyquil_config.qpu_compiler_url
+        else:
+            qpu_compiler_endpoint = self.qpu_compiler_client.endpoint
+        self.qpu_compiler_client = refresh_client(self.qpu_compiler_client, qpu_compiler_endpoint)
 
 
 class QVMCompiler(AbstractCompiler):
@@ -355,4 +363,8 @@ class QVMCompiler(AbstractCompiler):
         Reset the state of the QPUCompiler Client connections.
         """
         pyquil_config = PyquilConfig()
-        self.client = refresh_client(self.client, pyquil_config.quilc_url)
+        if pyquil_config.quilc_url is not None:
+            endpoint = pyquil_config.quilc_url
+        else:
+            endpoint = self.client.endpoint
+        self.client = refresh_client(self.client, endpoint)
