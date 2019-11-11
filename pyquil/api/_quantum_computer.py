@@ -244,19 +244,15 @@ class QuantumComputer:
                 correlations += setting.correlations
             expectations = bitstrings_to_expectations(symmetrized_bitstrings,
                                                       correlations=correlations)
-            print(expectations)
 
 
             means = np.mean(expectations, axis=0)
-            print(means)
             std_errs = np.std(expectations, axis=0, ddof=1) / np.sqrt(len(expectations))
 
             # TODO: make this into a function
             sim_rs = []
             for corr, mean, std_err in zip(correlations, means, std_errs):
-                print(corr, mean, std_err)
                 out_operator = PauliTerm.from_list([(setting.out_operator[i], i) for i in corr])
-                print(out_operator)
                 s = ExperimentSetting(in_state=setting.in_state,
                                       out_operator=out_operator,
                                       correlations=corr)
@@ -271,14 +267,6 @@ class QuantumComputer:
                                       std_err=sim_rs[0].std_err,
                                       total_counts=sim_rs[0].total_counts,
                                       correlations=sim_rs[1:])
-
-            # TODO: add calibration and correction
-            # mean = np.mean(expectations).item()
-            # std_err = np.std(expectations, axis=0, ddof=1) / np.sqrt(len(expectations))
-            # result = ExperimentResult(setting=setting,
-            #                           expectation=mean,
-            #                           std_err=std_err,
-            #                           total_counts=len(expectations))
             results.append(result)
         return results
 

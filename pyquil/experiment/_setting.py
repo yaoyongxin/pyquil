@@ -249,6 +249,7 @@ class ExperimentSetting:
 
         :return: Memory map for state prep and measurement.
         """
+        # TODO: change to in_state
         preparation_map = pauli_term_to_preparation_memory_map(self.in_operator)
         measurement_map = pauli_term_to_measurement_memory_map(self.out_operator)
         return {**preparation_map, **measurement_map}
