@@ -219,6 +219,7 @@ class QuantumComputer:
             # assumes that experiments are defined starting at qubit 0
             num_qubits = max(setting.out_operator.get_qubits()) + 1
             experiment_setting_memory_map = setting.build_setting_memory_map()
+            # TODO: maybe this takes a qubit list
             symmetrization_memory_maps = build_symmetrization_memory_maps(num_qubits,
                                                                           experiment.symmetrization)
             merged_memory_maps = merge_memory_map_lists([experiment_setting_memory_map],
@@ -231,6 +232,7 @@ class QuantumComputer:
                 bitstrings = self.run(executable, memory_map=final_memory_map)
 
                 if 'symmetrization' in final_memory_map:
+                    # TODO: maybe this should always be len nQ
                     bitmask = np.array(np.array(final_memory_map['symmetrization']) / np.pi,
                                        dtype=int)
                     bitstrings = np.bitwise_xor(bitstrings, bitmask)

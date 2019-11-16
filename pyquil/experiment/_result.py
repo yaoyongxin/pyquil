@@ -268,10 +268,14 @@ def results_to_dict(results: List[ExperimentResult]) -> dict:
     """
     results_dict = {}
     for result in results:
-        results_dict[f'{result.setting.out_operator.id(sort_ops=False)}'] = result.expectation
-        results_dict[f'{result.setting.out_operator.id(sort_ops=False)}_err'] = result.std_err
+        out_operator = result.setting.out_operator.id(sort_ops=False)
+        result_dict = result.serializable()
+        for key, value in result_dict.items():
+            results_dict[f'{out_operator}_{key}'] = value
         if result.correlations:
             for c in result.correlations:
-                results_dict[f'{c.setting.out_operator.id(sort_ops=False)}'] = c.expectation
-                results_dict[f'{c.setting.out_operator.id(sort_ops=False)}_err'] = c.std_err
+                oo = c.setting.out_operator.id(sort_ops=False)
+                rd = c.serializable()
+                for key, value in rd.items():
+                    results_dict[f'{oo}_{key}'] = value
     return results_dict
