@@ -1,6 +1,7 @@
 PyQuil: Quantum programming in Python
 =====================================
 
+[![binder][binder-badge]][binder-repo]
 [![gitlab][gitlab-badge]][gitlab-repo]
 [![docs][docs-badge]][docs-repo]
 [![coverage][coverage-badge]][coverage-repo]
@@ -161,8 +162,10 @@ License
 PyQuil is licensed under the
 [Apache License 2.0](https://github.com/rigetti/pyQuil/blob/master/LICENSE).
 
-[black-badge]: https://img.shields.io/badge/code%20style-black-000000.svg
+[black-badge]: https://img.shields.io/badge/style-black-000000.svg
 [black-repo]: https://github.com/psf/black
+[binder-badge]: https://mybinder.org/badge_logo.svg
+[binder-repo]: https://mybinder.org/v2/gh/karalekas/stanford-cs269q/master?urlpath=lab/tree/Lecture4.ipynb
 [conda-forge-badge]: https://img.shields.io/conda/vn/conda-forge/pyquil.svg
 [conda-forge-repo]: https://anaconda.org/conda-forge/pyquil
 [conda-rigetti-badge]: https://img.shields.io/conda/vn/rigetti/pyquil?label=conda-rigetti
@@ -183,7 +186,7 @@ PyQuil is licensed under the
 [pypi-repo]: https://pypi.org/project/pyquil/
 [sempahore-badge]: https://semaphoreci.com/api/v1/rigetti/pyquil/branches/master/shields_badge.svg
 [sempahore-repo]: https://semaphoreci.com/rigetti/pyquil
-[slack-badge]: https://img.shields.io/badge/slack-rigetti-812f82.svg?
+[slack-badge]: https://img.shields.io/badge/slack-join-812f82.svg?
 
 [bug]: https://github.com/rigetti/pyquil/issues/new?assignees=&labels=bug+%3Abug%3A&template=BUG_REPORT.md&title=
 [feature]: https://github.com/rigetti/pyquil/issues/new?assignees=&labels=enhancement+%3Asparkles%3A&template=FEATURE_REQUEST.md&title=
