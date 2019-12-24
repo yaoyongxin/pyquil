@@ -2,7 +2,6 @@ PyQuil: Quantum programming in Python
 =====================================
 
 [![gitlab][gitlab-badge]][gitlab-repo]
-[![sempahore][sempahore-badge]][sempahore-repo]
 [![docs][docs-badge]][docs-repo]
 [![coverage][coverage-badge]][coverage-repo]
 [![pypi][pypi-badge]][pypi-repo]
@@ -10,28 +9,6 @@ PyQuil: Quantum programming in Python
 [![docker][docker-badge]][docker-repo]
 [![slack][slack-badge]][slack-invite]
 [![black][black-badge]][black-repo]
-
-[black-badge]: https://img.shields.io/badge/code%20style-black-000000.svg
-[black-repo]: https://github.com/psf/black
-[conda-forge-badge]: https://img.shields.io/conda/vn/conda-forge/pyquil.svg
-[conda-forge-repo]: https://anaconda.org/conda-forge/pyquil
-[conda-rigetti-badge]: https://img.shields.io/conda/vn/rigetti/pyquil?label=conda-rigetti
-[conda-rigetti-repo]: https://anaconda.org/rigetti/pyquil
-[coverage-badge]: https://gitlab.com/rigetti/forest/pyquil/badges/master/coverage.svg
-[coverage-repo]: https://gitlab.com/rigetti/forest/pyquil/commits/master
-[docker-badge]: https://img.shields.io/docker/pulls/rigetti/forest
-[docker-repo]: https://hub.docker.com/r/rigetti/forest
-[docs-badge]: https://readthedocs.org/projects/pyquil/badge/?version=latest
-[docs-repo]: http://pyquil.readthedocs.io/en/latest/?badge=latest
-[gitlab-badge]: https://img.shields.io/gitlab/pipeline/rigetti/pyquil
-[gitlab-repo]: https://gitlab.com/rigetti/forest/pyquil
-[pepy-badge]: https://pepy.tech/badge/pyquil
-[pepy-repo]: https://pepy.tech/project/black
-[pypi-badge]: https://img.shields.io/pypi/v/pyquil.svg
-[pypi-repo]: https://pypi.org/project/pyquil/
-[sempahore-badge]: https://semaphoreci.com/api/v1/rigetti/pyquil/branches/master/shields_badge.svg
-[sempahore-repo]: https://semaphoreci.com/rigetti/pyquil
-[slack-badge]: https://img.shields.io/badge/slack-rigetti-812f82.svg?
 
 PyQuil is a Python library for quantum programming using [Quil](https://arxiv.org/abs/1608.03355),
 the quantum instruction language developed at [Rigetti Computing](https://www.rigetti.com/).
@@ -124,6 +101,8 @@ the statistics of which are consistent with a two-qubit entangled state.
 Joining the Forest Community
 ----------------------------
 
+[![slack][slack-badge]][slack-invite]
+
 If you'd like to get involved with pyQuil and Forest, joining the [Rigetti Forest Slack
 Workspace][slack_invite]
 is a great place to start! You can do so by clicking the invite link in the previous sentence,
@@ -144,13 +123,6 @@ a detailed list of all announcements, improvements, changes, and bugfixes. The
 information, but with links to the pull request for each change and its corresponding author.
 Thanks for contributing to pyQuil! 🙂
 
-[bug]: https://github.com/rigetti/pyquil/issues/new?assignees=&labels=bug+%3Abug%3A&template=BUG_REPORT.md&title=
-[feature]: https://github.com/rigetti/pyquil/issues/new?assignees=&labels=enhancement+%3Asparkles%3A&template=FEATURE_REQUEST.md&title=
-[first]: https://github.com/rigetti/pyquil/labels/good%20first%20issue%20%3Ababy%3A
-[help]: https://github.com/rigetti/pyquil/labels/help%20wanted%20%3Awave%3A
-[fork]: https://github.com/rigetti/pyquil/fork
-[pr]: https://github.com/rigetti/pyquil/compare
-[slack-invite]: https://join.slack.com/t/rigetti-forest/shared_invite/enQtNTUyNTE1ODg3MzE2LWQwNzBlMjZlMmNlN2M5MzQyZDlmOGViODQ5ODI0NWMwNmYzODY4YTc2ZjdjOTNmNzhiYTk2YjVhNTE2NTRkODY
 
 Running on the QPU
 ------------------
@@ -184,7 +156,39 @@ R. Smith, M. J. Curtis and W. J. Zeng, "A Practical Quantum Instruction Set Arch
 License
 -------
 
-[![license](https://img.shields.io/github/license/rigetti/pyquil)](https://opensource.org/licenses/Apache-2.0)
+[![license][license-badge]][license-repo]
 
 PyQuil is licensed under the
 [Apache License 2.0](https://github.com/rigetti/pyQuil/blob/master/LICENSE).
+
+[black-badge]: https://img.shields.io/badge/code%20style-black-000000.svg
+[black-repo]: https://github.com/psf/black
+[conda-forge-badge]: https://img.shields.io/conda/vn/conda-forge/pyquil.svg
+[conda-forge-repo]: https://anaconda.org/conda-forge/pyquil
+[conda-rigetti-badge]: https://img.shields.io/conda/vn/rigetti/pyquil?label=conda-rigetti
+[conda-rigetti-repo]: https://anaconda.org/rigetti/pyquil
+[coverage-badge]: https://gitlab.com/rigetti/forest/pyquil/badges/master/coverage.svg
+[coverage-repo]: https://gitlab.com/rigetti/forest/pyquil/commits/master
+[docker-badge]: https://img.shields.io/docker/pulls/rigetti/forest
+[docker-repo]: https://hub.docker.com/r/rigetti/forest
+[docs-badge]: https://readthedocs.org/projects/pyquil/badge/?version=latest
+[docs-repo]: http://pyquil.readthedocs.io/en/latest/?badge=latest
+[gitlab-badge]: https://img.shields.io/gitlab/pipeline/rigetti/pyquil
+[gitlab-repo]: https://gitlab.com/rigetti/forest/pyquil
+[license-badge]: https://img.shields.io/github/license/rigetti/pyquil
+[license-repo]: https://opensource.org/licenses/Apache-2.0
+[pepy-badge]: https://pepy.tech/badge/pyquil
+[pepy-repo]: https://pepy.tech/project/black
+[pypi-badge]: https://img.shields.io/pypi/v/pyquil.svg
+[pypi-repo]: https://pypi.org/project/pyquil/
+[sempahore-badge]: https://semaphoreci.com/api/v1/rigetti/pyquil/branches/master/shields_badge.svg
+[sempahore-repo]: https://semaphoreci.com/rigetti/pyquil
+[slack-badge]: https://img.shields.io/badge/slack-rigetti-812f82.svg?
+
+[bug]: https://github.com/rigetti/pyquil/issues/new?assignees=&labels=bug+%3Abug%3A&template=BUG_REPORT.md&title=
+[feature]: https://github.com/rigetti/pyquil/issues/new?assignees=&labels=enhancement+%3Asparkles%3A&template=FEATURE_REQUEST.md&title=
+[first]: https://github.com/rigetti/pyquil/labels/good%20first%20issue%20%3Ababy%3A
+[help]: https://github.com/rigetti/pyquil/labels/help%20wanted%20%3Awave%3A
+[fork]: https://github.com/rigetti/pyquil/fork
+[pr]: https://github.com/rigetti/pyquil/compare
+[slack-invite]: https://join.slack.com/t/rigetti-forest/shared_invite/enQtNTUyNTE1ODg3MzE2LWQwNzBlMjZlMmNlN2M5MzQyZDlmOGViODQ5ODI0NWMwNmYzODY4YTc2ZjdjOTNmNzhiYTk2YjVhNTE2NTRkODY
