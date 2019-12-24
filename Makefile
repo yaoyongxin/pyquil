@@ -35,6 +35,10 @@ config:
 	echo "quilc_address = ${DEFAULT_QUILC_URL}" >> ~/.forest_config
 	cat ~/.forest_config
 
+.PHONY: coverage
+coverage:
+	coveralls
+
 .PHONY: dist
 dist:
 	python setup.py sdist
