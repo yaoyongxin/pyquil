@@ -167,8 +167,8 @@ PyQuil is licensed under the
 [conda-forge-repo]: https://anaconda.org/conda-forge/pyquil
 [conda-rigetti-badge]: https://img.shields.io/conda/vn/rigetti/pyquil?label=conda-rigetti
 [conda-rigetti-repo]: https://anaconda.org/rigetti/pyquil
-[coverage-badge]: https://gitlab.com/rigetti/forest/pyquil/badges/master/coverage.svg
-[coverage-repo]: https://gitlab.com/rigetti/forest/pyquil/commits/master
+[coverage-badge]: https://coveralls.io/repos/github/rigetti/pyquil/badge.svg?branch=more-badges
+[coverage-repo]: https://coveralls.io/github/rigetti/pyquil?branch=more-badges
 [docker-badge]: https://img.shields.io/docker/pulls/rigetti/forest
 [docker-repo]: https://hub.docker.com/r/rigetti/forest
 [docs-badge]: https://readthedocs.org/projects/pyquil/badge/?version=latest
