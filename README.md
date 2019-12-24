@@ -164,7 +164,7 @@ PyQuil is licensed under the
 
 [black-badge]: https://img.shields.io/badge/style-black-000000.svg
 [black-repo]: https://github.com/psf/black
-[binder-badge]: https://mybinder.org/badge_logo.svg
+[binder-badge]: https://img.shields.io/badge/launch-binder-6C99C2
 [binder-repo]: https://mybinder.org/v2/gh/karalekas/stanford-cs269q/master?urlpath=lab/tree/Lecture4.ipynb
 [conda-forge-badge]: https://img.shields.io/conda/vn/conda-forge/pyquil.svg
 [conda-forge-repo]: https://anaconda.org/conda-forge/pyquil
