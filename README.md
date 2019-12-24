@@ -23,15 +23,15 @@ PyQuil: Quantum programming in Python
 [docker-repo]: https://hub.docker.com/r/rigetti/forest
 [docs-badge]: https://readthedocs.org/projects/pyquil/badge/?version=latest
 [docs-repo]: http://pyquil.readthedocs.io/en/latest/?badge=latest
-[gitlab-badge]: https://gitlab.com/rigetti/forest/pyquil/badges/master/pipeline.svg
-[gitlab-repo]: https://gitlab.com/rigetti/forest/pyquil/commits/master
+[gitlab-badge]: https://img.shields.io/gitlab/pipeline/rigetti/pyquil
+[gitlab-repo]: https://gitlab.com/rigetti/forest/pyquil
 [pepy-badge]: https://pepy.tech/badge/pyquil
 [pepy-repo]: https://pepy.tech/project/black
 [pypi-badge]: https://img.shields.io/pypi/v/pyquil.svg
 [pypi-repo]: https://pypi.org/project/pyquil/
 [sempahore-badge]: https://semaphoreci.com/api/v1/rigetti/pyquil/branches/master/shields_badge.svg
 [sempahore-repo]: https://semaphoreci.com/rigetti/pyquil
-[slack-badge]: https://img.shields.io/badge/slack-rigetti--forest-812f82.svg?
+[slack-badge]: https://img.shields.io/badge/slack-rigetti-812f82.svg?
 
 PyQuil is a Python library for quantum programming using [Quil](https://arxiv.org/abs/1608.03355),
 the quantum instruction language developed at [Rigetti Computing](https://www.rigetti.com/).
