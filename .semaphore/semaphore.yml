@@ -12,7 +12,7 @@ blocks:
           commands:
             - 'docker run --rm -itd -p 5555:5555 rigetti/quilc -R'
             - 'docker run --rm -itd -p 5000:5000 rigetti/qvm -S'
-            - make teat
+            - make test
         - name: check-format
           commands:
             - make check-format
