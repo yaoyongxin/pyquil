@@ -1,0 +1,35 @@
+version: v1.0
+name: Python
+agent:
+  machine:
+    type: e1-standard-2
+    os_image: ubuntu1804
+blocks:
+  - name: Test
+    task:
+      jobs:
+        - name: test-py37
+          commands:
+            - 'docker run --rm -itd -p 5555:5555 rigetti/quilc -R'
+            - 'docker run --rm -itd -p 5000:5000 rigetti/qvm -S'
+            - make teat
+        - name: check-format
+          commands:
+            - make check-format
+        - name: check-types
+          commands:
+            - make check-types
+        - name: check-style
+          commands:
+            - make check-style
+        - name: build-docs
+          commands:
+            - install-package pandoc
+            - make docs
+      prologue:
+        commands:
+          - sem-version python 3.7
+          - python -m pip install --upgrade pip
+          - checkout
+          - make install
+          - make requirements
