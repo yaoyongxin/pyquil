@@ -20,7 +20,7 @@ import sys
 from setuptools import setup, find_packages
 
 VERSION_ERROR = """
-PyQuil 2.0+ requires Python 3
+PyQuil 2.0+ requires Python 3.6 or newer
 
 To install the most recent version with support for Python 2, make sure you
 have pip >= 9.0 as well as setuptools >= 24.2:
