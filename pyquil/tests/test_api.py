@@ -28,7 +28,12 @@ import numpy as np
 import pytest
 import requests_mock
 from rpcq import Server
-from rpcq.messages import BinaryExecutableRequest, BinaryExecutableResponse
+from rpcq.messages import (
+    ParameterAref,
+    ParameterSpec,
+    QuiltBinaryExecutableRequest,
+    QuiltBinaryExecutableResponse,
+)
 
 from pyquil.api import QVMConnection, QPUCompiler, get_qc, QVMCompiler
 from pyquil.api._base_connection import (
@@ -36,6 +41,7 @@ from pyquil.api._base_connection import (
     validate_qubit_list,
     prepare_register_list,
 )
+from pyquil.api._rewrite_arithmetic import rewrite_arithmetic
 from pyquil.device import ISA, NxDevice
 from pyquil.gates import CNOT, H, MEASURE, PHASE, Z, RZ, RX, CZ
 from pyquil.paulis import PauliTerm
@@ -272,10 +278,13 @@ mock_qpu_compiler_server = Server()
 
 
 @mock_qpu_compiler_server.rpc_handler
-def native_quil_to_binary(payload: BinaryExecutableRequest) -> BinaryExecutableResponse:
-    assert Program(payload.quil).out() == COMPILED_BELL_STATE.out()
+def native_quilt_to_binary(payload: QuiltBinaryExecutableRequest) -> QuiltBinaryExecutableResponse:
+    assert Program(payload.quilt).out() == COMPILED_BELL_STATE.out()
     time.sleep(0.1)
-    return BinaryExecutableResponse(program=COMPILED_BYTES_ARRAY)
+    return QuiltBinaryExecutableResponse(
+        program=COMPILED_BYTES_ARRAY,
+        debug={}
+    )
 
 
 @mock_qpu_compiler_server.rpc_handler
@@ -343,3 +352,28 @@ def test_local_conjugate_request(benchmarker):
 def test_apply_clifford_to_pauli(benchmarker):
     response = benchmarker.apply_clifford_to_pauli(Program("H 0"), PauliTerm("I", 0, 0.34))
     assert response == PauliTerm("I", 0, 0.34)
+
+
+def test_rewrite_arithmetic():
+    prog = Program([
+        "DECLARE theta REAL",
+        "DECLARE beta REAL",
+        "RZ(3 * theta) 0",
+        "RZ(beta+theta) 0",
+    ])
+    response = rewrite_arithmetic(prog)
+    assert response.original_memory_descriptors == {
+        'theta': ParameterSpec(length=1, type='REAL'),
+        'beta': ParameterSpec(length=1, type='REAL')
+    }
+    assert response.recalculation_table == {
+        ParameterAref(index=0, name='__P2'): '3*theta[0]',
+        ParameterAref(index=1, name='__P2'): 'beta[0] + theta[0]'
+    }
+    assert response.quil.splitlines() == [
+        "DECLARE __P2 REAL[2]",
+        "DECLARE theta REAL[1]",
+        "DECLARE beta REAL[1]",
+        "RZ(__P2[0]) 0",
+        "RZ(__P2[1]) 0"
+    ]
