@@ -134,6 +134,9 @@ class Experiment:
         and optional calibration of each observable. The following integer levels, encapsulated in
         the ``SymmetrizationLevel`` integer enum, are currently supported:
 
+        # yxy begin
+        * -2 -- symmetrization using simplest no-flip + all flip.
+        # yxy end
         * -1 -- exhaustive symmetrization uses every possible combination of flips
         * 0 -- no symmetrization
         * 1 -- symmetrization using an orthogonal array (OA) with strength 1
@@ -173,7 +176,10 @@ class Experiment:
             )
         self.qubits = qubits
         self.symmetrization = SymmetrizationLevel(symmetrization)
-        if self.symmetrization != SymmetrizationLevel.EXHAUSTIVE:
+        # yxy begin
+        #if self.symmetrization != SymmetrizationLevel.EXHAUSTIVE:
+        if self.symmetrization >= 0:
+        # yxy end
             if type(calibration) == int and calibration != 0:
                 warnings.warn(
                     "Calibration is only supported for exhaustive symmetrization, "
@@ -432,13 +438,26 @@ class Experiment:
             return [{}]
 
         # TODO: add support for orthogonal arrays
-        if self.symmetrization != SymmetrizationLevel.EXHAUSTIVE:
+        # yxy begin
+        #if self.symmetrization != SymmetrizationLevel.EXHAUSTIVE:
+        if self.symmetrization >= 0:
+        # yxy end
             raise ValueError("We only support exhaustive symmetrization for now.")
 
         import numpy as np
         import itertools
 
-        assignments = itertools.product(np.array([0, np.pi]), repeat=len(symm_registers))
+        # yxy begin
+        # assignments = itertools.product(np.array([0, np.pi]), repeat=len(symm_registers))
+        if self.symmetrization == SymmetrizationLevel.EXHAUSTIVE:
+            assignments = itertools.product(np.array([0, np.pi]), repeat=len(symm_registers))
+            n_assignmemts = 2**len(symm_registers)
+        else:
+            n_symm_registers = len(symm_registers)
+            assignments = np.array([[0]*n_symm_registers, [np.pi]*n_symm_registers])
+            n_assignmemts = 2
+        # print(f"[mypyquil] num_symm_circuits: {n_assignmemts}")
+        # yxy end
         memory_maps = []
         for a in assignments:
             zeros = np.zeros(num_meas_registers)
@@ -480,13 +499,19 @@ class Experiment:
             calibration_program += RESET()
         calibration_program.wrap_in_numshots_loop(self.shots)
 
-        if self.symmetrization != SymmetrizationLevel.EXHAUSTIVE:
+        # yxy begin
+        #if self.symmetrization != SymmetrizationLevel.EXHAUSTIVE:
+        if self.symmetrization >= 0:
+        # yxy end
             raise ValueError("We currently only support calibration for exhaustive symmetrization")
 
         return Experiment(
             settings=calibration_settings,
             program=calibration_program,
-            symmetrization=SymmetrizationLevel.EXHAUSTIVE,
+            # yxy begin
+            # symmetrization=SymmetrizationLevel.EXHAUSTIVE,
+            symmetrization=self.symmetrization,
+            # yxy end
             calibration=CalibrationMethod.NONE,
         )
 

@@ -241,7 +241,6 @@ class QuantumComputer:
             merged_memory_maps = merge_memory_map_lists(
                 [experiment_setting_memory_map], symmetrization_memory_maps
             )
-
             all_bitstrings = []
             # TODO: accomplish symmetrization via batch endpoint
             for merged_memory_map in merged_memory_maps:
@@ -256,21 +255,29 @@ class QuantumComputer:
                 all_bitstrings.append(bitstrings)
             symmetrized_bitstrings = np.concatenate(all_bitstrings)
 
-            joint_expectations = [experiment.get_meas_registers(qubits)]
+            joint_qubits = [qubits]
             if setting.additional_expectations:
-                joint_expectations += setting.additional_expectations
+                # cq applied.
+                joint_qubits += setting.additional_expectations
+            # cq removed.
+            joint_expectations = [experiment.get_meas_registers(qbits)
+                    for qbits in joint_qubits]
+
             expectations = bitstrings_to_expectations(
-                symmetrized_bitstrings, joint_expectations=joint_expectations
-            )
+                    symmetrized_bitstrings,
+                    joint_expectations=joint_expectations
+                    )
 
             means = np.mean(expectations, axis=0)
             std_errs = np.std(expectations, axis=0, ddof=1) / np.sqrt(len(expectations))
 
             joint_results = []
-            for qubit_subset, mean, std_err in zip(joint_expectations, means, std_errs):
+            # use joint_qubits to retrieve pauliterm correctly.
+            for qubit_subset, mean, std_err in zip(joint_qubits, means, std_errs):
                 out_operator = PauliTerm.from_list(
                     [(setting.out_operator[i], i) for i in qubit_subset]
                 )
+
                 s = ExperimentSetting(
                     in_state=setting.in_state,
                     out_operator=out_operator,

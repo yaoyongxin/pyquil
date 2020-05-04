@@ -18,6 +18,9 @@ from enum import IntEnum
 
 
 class SymmetrizationLevel(IntEnum):
+    # yxy begin
+    HEADTAIL = -2
+    # yxy end
     EXHAUSTIVE = -1
     NONE = 0
     OA_STRENGTH_1 = 1
